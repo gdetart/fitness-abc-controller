@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace accessController
 {
@@ -95,7 +93,7 @@ namespace accessController
             return sequenceId; // The last issue of the serial number(xid)
         }
 
-   
+
         public void Close()
         {
             controller.Dispose();
