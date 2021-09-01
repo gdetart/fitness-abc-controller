@@ -2,29 +2,38 @@
 
 namespace accessController
 {
-    internal class AccessPacket
+    internal class Packet
     {
-        public static int WGPacketSize = 64;                //Short Packet Length
+        //Packet Length
+        public static int WGPacketSize = 64; 
+        //Type
+        const static unsigned char	 Type = 0x19;
+        //Type
+        public static int Type = 0x17;   //Type
 
-        //2015-04-29 22:22:41 const static unsigned char	 Type = 0x19;					//Type
-        public static int Type = 0x17;      //2015-04-29 22:22:50			//Type
+        //Access Controller' (DEVICE) Port
+        public static int ControllerPort = 60000;
+        //Special logo to prevent issues
+        public static long SpecialFlag = 0x55AAAA55;     
+        //Function ID
+        public int functionID;                           
+        //Deceive Serial Number(Controller) four bytes, nine dec number
+        public long iDevSn;                              
+        //Access Controller' IP Address
+        public string IP;                                
 
-        public static int ControllerPort = 60000;        //Access Controller' Port
-        public static long SpecialFlag = 0x55AAAA55;     //Special logo to prevent misuse
+        //56 bytes of data [including sequenceId]
+        public byte[] data = new byte[56];               
+        //Receive Data buffer
+        public byte[] recv = new byte[WGPacketSize];     
 
-        public int functionID;                           //Function ID
-        public long iDevSn;                              //Deceive Serial Number(Controller) four bytes, nine dec number
-        public string IP;                                //Access Controller' IP Address
-
-        public byte[] data = new byte[56];               //56 bytes of data [including sequenceId]
-        public byte[] recv = new byte[WGPacketSize];     //Receive Data buffer
-
-        public AccessPacket()
+        public Packet()
         {
             Reset();
         }
 
-        public void Reset()  //Data reset
+        //Data reset
+        public void Reset() 
         {
             for (int i = 0; i < 56; i++)
             {
@@ -32,9 +41,10 @@ namespace accessController
             }
         }
 
-        private static long sequenceId;     //
+        private static long sequenceId;
 
-        public byte[] ToByte() //Generates a 64-byte short package
+        //Generates a 64-byte short package
+        public byte[] ToByte() 
         {
             byte[] buff = new byte[WGPacketSize];
             sequenceId++;
@@ -49,7 +59,8 @@ namespace accessController
 
         private readonly WG3000_COMM.Core.wgMjController controller = new WG3000_COMM.Core.wgMjController();
 
-        public int Run()  //send command ,receive return command
+        //send command ,receive return command
+        public int Run()  
         {
             byte[] buff = ToByte();
 
@@ -73,9 +84,9 @@ namespace accessController
                         sequenceIdReceived += (lng << (8 * i));
                     }
 
-                    if ((recv[0] == Type)                       //Type consistent
-                        && (recv[1] == functionID)              //Function ID is consistent
-                        && (sequenceIdReceived == sequenceId))  //Controller'Serial number  correspondence
+                    if ((recv[0] == Type)                       
+                        && (recv[1] == functionID)              
+                        && (sequenceIdReceived == sequenceId))  
                     {
                         return 1;
                     }
@@ -84,7 +95,7 @@ namespace accessController
                         errcnt++;
                     }
                 }
-            } while (tries-- > 0); //Retry three times
+            } while (tries-- > 0); 
 
             return -1;
         }
