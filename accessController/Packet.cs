@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace accessController
 {
@@ -6,8 +9,6 @@ namespace accessController
     {
         //Packet Length
         public static int WGPacketSize = 64; 
-        //Type
-        const static unsigned char	 Type = 0x19;
         //Type
         public static int Type = 0x17;   //Type
 

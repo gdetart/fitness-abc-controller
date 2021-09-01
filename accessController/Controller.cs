@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace accessController 
 {
       public class Controller : Helpers
@@ -6,7 +9,7 @@ namespace accessController
         public long controllerSN ;
         public static System.Text.Encoding stringEncoder { get; }
         private Packet pkt;
-        public void Controller (string IP,long SN)
+        public Controller (string IP,long SN)
         {
             controllerIP=IP;
             controllerSN=SN;
@@ -15,21 +18,12 @@ namespace accessController
                 iDevSn = controllerSN,
                 IP = controllerIP
             };
-            pkt.functionID = 0x20;
-            int ret = pkt.Run();
-            return ret;
         }
         
 
         public void closeConnection()
         {
             pkt.Close();
-        }
-
-        public int Initialize()
-        {
-            
-
         }
         
         //Read Date and time of the controller device

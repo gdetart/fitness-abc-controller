@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System;
 namespace accessController
 {
 
@@ -16,8 +18,9 @@ namespace accessController
             return val;
         }
 
-        public void log (string x){
-            Console.WriteLine(x);
+        public void log (string x)
+        {
+            System.Console.WriteLine(x);
         }
         public void displayRecordInformation(byte[] recv)
         {
