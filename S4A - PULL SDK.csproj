@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>S4A___PULL_SDK</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="n3kAdrtC">
+      <HintPath>n3kAdrtC.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

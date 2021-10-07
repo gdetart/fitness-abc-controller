@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31605.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S4A - PULL SDK", "S4A - PULL SDK.csproj", "{51CA69B9-E01B-4D1B-9FFA-14510BFBC90E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51CA69B9-E01B-4D1B-9FFA-14510BFBC90E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51CA69B9-E01B-4D1B-9FFA-14510BFBC90E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51CA69B9-E01B-4D1B-9FFA-14510BFBC90E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51CA69B9-E01B-4D1B-9FFA-14510BFBC90E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0C887BF-5B84-439C-B71A-0618E92B3399}
+	EndGlobalSection
+EndGlobal

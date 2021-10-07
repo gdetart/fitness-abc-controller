@@ -1,13 +1,12 @@
+﻿using System;
 using System.Collections.Generic;
-using System;
+
 namespace accessController
 {
-
     public class Helpers
     {
-        //Convert bytes to long 
-        //Used when reciving data from the controller device
-        public long byteToLong(byte[] buff, int start, int len)
+
+        protected long ByteToLong(byte[] buff, int start, int len)
         {
             long val = 0;
             for (int i = 0; i < len && i < 4; i++)
@@ -18,11 +17,12 @@ namespace accessController
             return val;
         }
 
-        public void log (string x)
+        public void log(string x)
         {
-            System.Console.WriteLine(x);
+            Console.WriteLine(x);
         }
-        public void displayRecordInformation(byte[] recv)
+
+        public void DisplayRecordInformation(byte[] recv)
         {
             //8-11	Record the index number
             //(=0 no record)	4	0x00000000
@@ -48,7 +48,7 @@ namespace accessController
             //16-19	Card Number(Type is when the swipe card is recorded)
             //Or number (other types of records)	4
             long recordCardNO = 0;
-            recordCardNO = byteToLong(recv, 16, 4);
+            recordCardNO = ByteToLong(recv, 16, 4);
 
             //20-26	Swipe card time:
             //The date and time seconds (using the BCD code) See the description of the setup time section
@@ -82,7 +82,7 @@ namespace accessController
                 log(string.Format("  IN/OUT = {0}", recordInOrOut == 1 ? "Door In" : "Door Out"));
                 log(string.Format("  Valid = {0}", recordValid == 1 ? "Pass" : "No Pass"));
                 log(string.Format("  Time = {0}", recordTime));
-                log(string.Format("  Description = {0}", getReasonDetailEnglish(reason)));
+                log(string.Format("  Description = {0}", GetReasonDetailEnglish(reason)));
             }
             else if (recordType == 2)
             {
@@ -92,7 +92,7 @@ namespace accessController
                 log(string.Format("  Serial number = {0}", recordCardNO));
                 log(string.Format("  Door Number = {0}", recordDoorNO));
                 log(string.Format("  Time = {0}", recordTime));
-                log(string.Format("  Description = {0}", getReasonDetailEnglish(reason)));
+                log(string.Format("  Description = {0}", GetReasonDetailEnglish(reason)));
             }
             else if (recordType == 3)
             {
@@ -102,11 +102,11 @@ namespace accessController
                 log(string.Format("  Serial number = {0}", recordCardNO));
                 log(string.Format("  Door Number = {0}", recordDoorNO));
                 log(string.Format("  Time = {0}", recordTime));
-                log(string.Format("  Description = {0}", getReasonDetailEnglish(reason)));
+                log(string.Format("  Description = {0}", GetReasonDetailEnglish(reason)));
             }
         }
 
-        public string returnRecordInfo(byte[] recv)
+        public string ReturnRecordInfo(byte[] recv)
         {
             //8-11	Record the index number
             //(=0 no record)	4	0x00000000
@@ -132,14 +132,14 @@ namespace accessController
             //16-19	Card Number(Type is when the swipe card is recorded)
             //Or number (other types of records)	4
             long recordCardNO = 0;
-            recordCardNO = byteToLong(recv, 16, 4);
+            recordCardNO = ByteToLong(recv, 16, 4);
 
             //20-26	Swipe card time:
             //The date and time seconds (using the BCD code) See the description of the setup time section
             string recordTime = "2000-01-01 00:00:00";
             recordTime = string.Format("{0:X2}{1:X2}-{2:X2}-{3:X2} {4:X2}:{5:X2}:{6:X2}",
                 recv[20], recv[21], recv[22], recv[23], recv[24], recv[25], recv[26]);
-
+            //2012.12.11 10:49:59	7
             //27	Record the ResonNO(You can check the "swipe card record description. Xls" file ReasonNO)
             //Dealing with complex information	1
             int reason = recv[27];
@@ -157,22 +157,22 @@ namespace accessController
             {
                 return (" The record of the specified index bit has been overwritten. Please use index 0 to retrieve the index value of the earliest record");
             }
-            else if (recordType == 1) // Displays data whose record type is card number
+            else if (recordType == 1) //2015-06-10 08:49:31 Displays data whose record type is card number
             {
                 //Card Number
-                return (string.Format("Index Bit={0},Card Number = {1}, Door Number = {2},IN/OUT = {3}, Valid = {4}, Time = {5}, Description = {6}  ", recordIndex, recordCardNO, recordDoorNO, recordInOrOut, recordValid, recordTime, getReasonDetailEnglish(reason)));
+                return (string.Format("Index Bit={0},Card Number = {1}, Door Number = {2},IN/OUT = {3}, Valid = {4}, Time = {5}, Description = {6}  ", recordIndex, recordCardNO, recordDoorNO, recordInOrOut, recordValid, recordTime, GetReasonDetailEnglish(reason)));
             }
             else if (recordType == 2)
             {
                 //Other processing
                 //Door, button, device start, remote door open record
-                return (string.Format("Index Bit={0}  No swipe card record,  Serial number = {1},  Door Number = {2} Time = {3}  Description = {4}", recordIndex, recordCardNO, recordDoorNO, recordTime, getReasonDetailEnglish(reason)));
+                return (string.Format("Index Bit={0}  No swipe card record,  Serial number = {1},  Door Number = {2} Time = {3}  Description = {4}", recordIndex, recordCardNO, recordDoorNO, recordTime, GetReasonDetailEnglish(reason)));
             }
             else if (recordType == 3)
             {
                 //Other processing
                 //alarm record
-                return (string.Format("Index Bit={0}  alarm record,Card number = {0}, Door Number = {0}, Time = {0},Description = {0}", recordIndex, recordCardNO, recordDoorNO, recordTime, getReasonDetailEnglish(reason)));
+                return (string.Format("Index Bit={0}  alarm record,Card number = {0}, Door Number = {0}, Time = {0},Description = {0}", recordIndex, recordCardNO, recordDoorNO, recordTime, GetReasonDetailEnglish(reason)));
             }
             else
             {
@@ -180,59 +180,8 @@ namespace accessController
             }
         }
 
-        public readonly string[] RecordDetails =
-                    {
-                    "1","SwipePass","Swipe",
-                    "2","SwipePass","Swipe Close",
-                    "3","SwipePass","Swipe Open",
-                    "4","SwipePass","Swipe Limited Times",
-                    "5","SwipeNOPass","Denied Access: PC Control",
-                    "6","SwipeNOPass","Denied Access: No PRIVILEGE",
-                    "7","SwipeNOPass","Denied Access: Wrong PASSWORD",
-                    "8","SwipeNOPass","Denied Access: AntiBack",
-                    "9","SwipeNOPass","Denied Access: More Cards",
-                    "10","SwipeNOPass","Denied Access: First Card Open",
-                    "11","SwipeNOPass","Denied Access: Door Set NC",
-                    "12","SwipeNOPass","Denied Access: InterLock",
-                    "13","SwipeNOPass","Denied Access: Limited Times",
-                    "14","SwipeNOPass","Denied Access: Limited Person Indoor",
-                    "15","SwipeNOPass","Denied Access: Invalid Timezone",
-                    "16","SwipeNOPass","Denied Access: In Order",
-                    "17","SwipeNOPass","Denied Access: SWIPE GAP LIMIT",
-                    "18","SwipeNOPass","Denied Access",
-                    "19","SwipeNOPass","Denied Access: Limited Times",
-                    "20","ValidEvent","Push Button",
-                    "21","ValidEvent","Push Button Open",
-                    "22","ValidEvent","Push Button Close",
-                    "23","ValidEvent","Door Open",
-                    "24","ValidEvent","Door Closed",
-                    "25","ValidEvent","Super Password Open Door",
-                    "26","ValidEvent","Super Password Open",
-                    "27","ValidEvent","Super Password Close",
-                    "28","Warn","Controller Power On",
-                    "29","Warn","Controller Reset",
-                    "30","Warn","Push Button Invalid: Disable",
-                    "31","Warn","Push Button Invalid: Forced Lock",
-                    "32","Warn","Push Button Invalid: Not On Line",
-                    "33","Warn","Push Button Invalid: InterLock",
-                    "34","Warn","Threat",
-                    "35","Warn","Threat Open",
-                    "36","Warn","Threat Close",
-                    "37","Warn","Open too long",
-                    "38","Warn","Forced Open",
-                    "39","Warn","Fire",
-                    "40","Warn","Forced Close",
-                    "41","Warn","Guard Against Theft",
-                    "42","Warn","7*24Hour Zone",
-                    "43","Warn","Emergency Call",
-                    "44","RemoteOpen","Remote Open Door",
-                    "45","RemoteOpen","Remote Open Door By USB Reader",
-                            };
 
-        
-        
-        
-        public string getReasonDetailEnglish(int Reason) //English description
+        public string GetReasonDetailEnglish(int Reason) //English description
         {
             if (Reason > 45)
             {
@@ -255,7 +204,7 @@ namespace accessController
             return ((val % 10) + (((val - (val % 10)) / 10) % 10) * 16);
         }
 
-        public void stringToBytes(ref byte[] outBytes, int startIndex, string name)
+        public void StringToBytes(ref byte[] outBytes, int startIndex, string name)
         {
             byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(name);
             if (nameBytes.Length > 28)
@@ -269,16 +218,64 @@ namespace accessController
             }
 
         }
-        public string bytesToString (byte[] bytes,int startIndex,int length)
+        public string BytesToString(byte[] bytes, int startIndex, int length)
         {
-            byte[] nameBytes= new byte[32];
-            for(int i = 0; i < nameBytes.Length; i++)
+            byte[] nameBytes = new byte[32];
+            for (int i = 0; i < nameBytes.Length; i++)
             {
                 nameBytes[i] = 0x00;
             }
-            Array.Copy(bytes,startIndex, nameBytes,0, 28);
+            Array.Copy(bytes, startIndex, nameBytes, 0, 28);
             return System.Text.Encoding.UTF8.GetString(nameBytes);
         }
-    }
 
+        public readonly string[] RecordDetails =
+      {
+"1","SwipePass","Swipe","notNeeded",
+"2","SwipePass","Swipe Close","notNeeded",
+"3","SwipePass","Swipe Open","notNeeded",
+"4","SwipePass","Swipe Limited Times","notNeeded",
+"5","SwipeNOPass","Denied Access: PC Control","notNeeded",
+"6","SwipeNOPass","Denied Access: No PRIVILEGE","notNeeded",
+"7","SwipeNOPass","Denied Access: Wrong PASSWORD","notNeeded",
+"8","SwipeNOPass","Denied Access: AntiBack","notNeeded",
+"9","SwipeNOPass","Denied Access: More Cards","notNeeded",
+"10","SwipeNOPass","Denied Access: First Card Open","notNeeded",
+"11","SwipeNOPass","Denied Access: Door Set NC","notNeeded",
+"12","SwipeNOPass","Denied Access: InterLock","notNeeded",
+"13","SwipeNOPass","Denied Access: Limited Times","notNeeded",
+"14","SwipeNOPass","Denied Access: Limited Person Indoor","notNeeded",
+"15","SwipeNOPass","Denied Access: Invalid Timezone","notNeeded",
+"16","SwipeNOPass","Denied Access: In Order","notNeeded",
+"17","SwipeNOPass","Denied Access: SWIPE GAP LIMIT","notNeeded",
+"18","SwipeNOPass","Denied Access","notNeeded",
+"19","SwipeNOPass","Denied Access: Limited Times","notNeeded",
+"20","ValidEvent","Push Button","notNeeded",
+"21","ValidEvent","Push Button Open","notNeeded",
+"22","ValidEvent","Push Button Close","notNeeded",
+"23","ValidEvent","Door Open","notNeeded",
+"24","ValidEvent","Door Closed","notNeeded",
+"25","ValidEvent","Super Password Open Door","notNeeded",
+"26","ValidEvent","Super Password Open","notNeeded",
+"27","ValidEvent","Super Password Close","notNeeded",
+"28","Warn","Controller Power On","notNeeded",
+"29","Warn","Controller Reset","notNeeded",
+"30","Warn","Push Button Invalid: Disable","notNeeded",
+"31","Warn","Push Button Invalid: Forced Lock","notNeeded",
+"32","Warn","Push Button Invalid: Not On Line","notNeeded",
+"33","Warn","Push Button Invalid: InterLock","notNeeded",
+"34","Warn","Threat","notNeeded",
+"35","Warn","Threat Open","notNeeded",
+"36","Warn","Threat Close","notNeeded",
+"37","Warn","Open too long","notNeeded",
+"38","Warn","Forced Open","notNeeded",
+"39","Warn","Fire","notNeeded",
+"40","Warn","Forced Close","notNeeded",
+"41","Warn","Guard Against Theft","notNeeded",
+"42","Warn","7*24Hour Zone","notNeeded",
+"43","Warn","Emergency Call","notNeeded",
+"44","RemoteOpen","Remote Open Door","notNeeded",
+"45","RemoteOpen","Remote Open Door By USB Reader","notNeeded"
+        };
+    }
 }
